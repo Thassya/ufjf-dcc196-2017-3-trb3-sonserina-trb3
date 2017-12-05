@@ -15,6 +15,7 @@ import ufjf.br.slytherin3.adapter.TarefaAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnAddTarefa;
+    private Button btnAddEtiqueta;
     private ListView lstTarefas;
     private TarefaAdapter tAdapter;
 
@@ -22,6 +23,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btnAddEtiqueta = (Button)findViewById(R.id.btnAddEtiqueta);
+        btnAddTarefa = (Button) findViewById(R.id.btnAddTarefa);
 
         tAdapter = new TarefaAdapter(getBaseContext(), null);
         tAdapter.atualizar();
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnAddTarefa = (Button) findViewById(R.id.btnAddTarefa);
+
         btnAddTarefa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnAddEtiqueta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent novaEtiqueta = new Intent(MainActivity.this, NovaEtiquetaActivity.class);
+                startActivity(novaEtiqueta);
+            }
+        });
 
     }
 }
