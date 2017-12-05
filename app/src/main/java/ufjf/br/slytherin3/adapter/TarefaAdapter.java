@@ -58,7 +58,9 @@ public class TarefaAdapter extends CursorAdapter {
                     TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE,
                     TarefaContract.Tarefa.COLUMN_NAME_ESTADO,
             };
-            Cursor c = db.query(TarefaContract.Tarefa.TABLE_NAME, visao, null, null, null, null, TarefaContract.Tarefa.COLUMN_NAME_ESTADO + " ASC");
+
+            String sort = TarefaContract.Tarefa.COLUMN_NAME_ESTADO + " ASC";
+            Cursor c = db.query(TarefaContract.Tarefa.TABLE_NAME, visao, null, null, null, null, sort);
             this.changeCursor(c);
         } catch (Exception e) {
             Log.e("ATUALIZAR TAREFA", e.getLocalizedMessage());
