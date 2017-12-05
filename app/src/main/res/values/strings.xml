@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Slytherin3</string>
+    <string name="adicionarTarefa">Adicionar Tarefa</string>
+    <string name="titulo">Título</string>
+    <string name="descricao">Descrição</string>
+    <string name="estado">Estado</string>
+    <string name="dificuldade">Dificuldade</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="salvar">Salvar</string>
+    <string name="tarefaExcluida">Tarefa excluída</string>
+    <string name="tarefaCadastrada">Tarefa cadastrada!</string>
+    <string name="tarefaAtualizada">Tarefa atualizada!</string>
+</resources>
