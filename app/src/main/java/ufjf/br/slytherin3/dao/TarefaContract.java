@@ -29,8 +29,9 @@ public class TarefaContract {
                 COLUMN_NAME_TITULO+TEXT_TYPE +  SEP+
                 COLUMN_NAME_DESCRICAO + TEXT_TYPE + SEP +
                 COLUMN_NAME_DIFICULDADE + TEXT_TYPE + SEP +
-                COLUMN_NAME_ESTADO + TEXT_TYPE +")";
+                COLUMN_NAME_ESTADO + TEXT_TYPE +"); ";
 
-        //public static final String SQL_DELETE_TAREFA = "DELETE FROM " + TABLE_NAME + " WHERE " +
     }
+
+
 }

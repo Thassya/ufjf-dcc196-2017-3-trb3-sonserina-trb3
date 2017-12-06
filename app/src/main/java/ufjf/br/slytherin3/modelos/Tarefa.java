@@ -1,5 +1,7 @@
 package ufjf.br.slytherin3.modelos;
 
+import java.util.ArrayList;
+
 /**
  * Created by thassya on 05/12/17.
  */
@@ -10,7 +12,7 @@ public class Tarefa {
     private String descricao;
     private Utils.Dificuldade dificuldade;
     private Utils.Estados estados;
-
+    private ArrayList<Etiqueta> etiquetas;
 
     public Tarefa() {
     }
@@ -54,13 +56,16 @@ public class Tarefa {
         this.estados = estados;
     }
 
+    public ArrayList<Etiqueta> getEtiquetas() {
+        return etiquetas;
+    }
+
+    public void setEtiquetas(ArrayList<Etiqueta> etiquetas) {
+        this.etiquetas = etiquetas;
+    }
+
     @Override
     public String toString() {
-        return "Tarefa{" +
-                "titulo='" + titulo + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", dificuldade=" + dificuldade +
-                ", estados=" + estados +
-                '}';
+        return "Tarefa: " + titulo;
     }
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import ufjf.br.slytherin3.R;
 import ufjf.br.slytherin3.dao.PlannerDbHelper;
 import ufjf.br.slytherin3.dao.TarefaContract;
+import ufjf.br.slytherin3.dao.TarefaEtiquetaContract;
 import ufjf.br.slytherin3.modelos.Tarefa;
 import ufjf.br.slytherin3.modelos.Utils;
 
@@ -41,10 +42,18 @@ public class TarefaAdapter extends CursorAdapter {
         TextView txtEstado = view.findViewById(R.id.txtEstado);
         txtTitulo.setText(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_TITULO)));
 
-        Utils.Dificuldade dif = Utils.Dificuldade.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE)));
+        Utils.Dificuldade dif;
+        Utils.Estados est;
+        try{
+            dif  = Utils.Dificuldade.getByName(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE)));
+            est = Utils.Estados.getByName(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_ESTADO)));
+
+        }catch (IllegalArgumentException iae){
+            dif  = Utils.Dificuldade.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE)));
+            est = Utils.Estados.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_ESTADO)));
+        }
         txtDificuldade.setText(dif.getValue());
 
-        Utils.Estados est = Utils.Estados.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(TarefaContract.Tarefa.COLUMN_NAME_ESTADO)));
         txtEstado.setText(est.getValue());
     }
 
@@ -68,7 +77,8 @@ public class TarefaAdapter extends CursorAdapter {
         }
     }
 
-    public void inserirTarefa(Tarefa t) {
+    public long inserirTarefa(Tarefa t) {
+        long id = -1;
         try {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
@@ -78,16 +88,18 @@ public class TarefaAdapter extends CursorAdapter {
             values.put(TarefaContract.Tarefa.COLUMN_NAME_ESTADO, String.valueOf(t.getEstados()));
 
 
-            long id = db.insert(TarefaContract.Tarefa.TABLE_NAME, null, values);
-
+            id = db.insert(TarefaContract.Tarefa.TABLE_NAME, null, values);
+            atualizar();
         } catch (Exception e) {
             Log.e("SALVAR TAREFA", e.getLocalizedMessage());
             Log.e("SALVAR TAREFA", e.getStackTrace().toString());
         }
-
+        return id;
     }
 
     public Tarefa getTarefa(String id) {
+        String rawQuery = "SELECT * FROM tarefas WHERE tarefas._id =" + id + "";
+
         Tarefa tarefa = new Tarefa();
         try {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -103,8 +115,15 @@ public class TarefaAdapter extends CursorAdapter {
 
             tarefa.setTitulo(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_TITULO)));
             tarefa.setDescricao(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_DESCRICAO)));
-            tarefa.setDificuldade(Utils.Dificuldade.valueOf(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE))));
-            tarefa.setEstados(Utils.Estados.valueOf(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_ESTADO))));
+
+            try{
+                tarefa.setDificuldade(Utils.Dificuldade.getByName(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE))));
+                tarefa.setEstados(Utils.Estados.getByName(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_ESTADO))));
+
+            }catch (IllegalArgumentException iae){
+                tarefa.setDificuldade(Utils.Dificuldade.valueOf(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_DIFICULDADE))));
+                tarefa.setEstados(Utils.Estados.valueOf(c.getString(c.getColumnIndex(TarefaContract.Tarefa.COLUMN_NAME_ESTADO))));
+            }
 
         } catch (Exception e) {
             Log.e("GETTAREFA", e.getLocalizedMessage());

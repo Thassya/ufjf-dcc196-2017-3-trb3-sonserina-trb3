@@ -3,14 +3,21 @@ package ufjf.br.slytherin3.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import ufjf.br.slytherin3.R;
+import ufjf.br.slytherin3.adapter.EtiquetaAdapter;
 import ufjf.br.slytherin3.adapter.TarefaAdapter;
+import ufjf.br.slytherin3.adapter.TarefaEtiquetaAdapter;
+import ufjf.br.slytherin3.modelos.Etiqueta;
 import ufjf.br.slytherin3.modelos.Tarefa;
 import ufjf.br.slytherin3.modelos.Utils;
 
@@ -27,8 +34,13 @@ public class EditarTarefaActivity extends AppCompatActivity {
     private Button btnCancelar;
     private String idTarefa;
     private Tarefa tarefa;
+    private Button btnAddEtiqueta;
+    private Spinner spnEtiquetas;
+    private ListView lstEtiquetas;
 
-    private TarefaAdapter adapter;
+    private TarefaAdapter tarefaAdapter;
+    private EtiquetaAdapter etiquetaAdapter;
+    private TarefaEtiquetaAdapter tarefaEtiquetaAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +54,28 @@ public class EditarTarefaActivity extends AppCompatActivity {
         btnSalvar = (Button) findViewById(R.id.btnSalvar);
         btnCancelar = (Button) findViewById(R.id.btnCancelar);
         idTarefa = getIntent().getStringExtra("idTarefa");
-
-        adapter = new TarefaAdapter(getBaseContext(), null);
-
+        btnAddEtiqueta = (Button) findViewById(R.id.btnAddEtiqueta);
+        spnEtiquetas = (Spinner) findViewById(R.id.spnEtiquetas);
+        lstEtiquetas = (ListView) findViewById(R.id.lstEtiquetas);
         spnEstado.setAdapter(new ArrayAdapter<Utils.Estados>(this, android.R.layout.simple_spinner_item, Utils.Estados.values()));
         spnDificuldade.setAdapter(new ArrayAdapter<Utils.Dificuldade>(this, android.R.layout.simple_spinner_item, Utils.Dificuldade.values()));
 
-        adapter.atualizar();
-        tarefa = adapter.getTarefa(idTarefa);
+
+        tarefaAdapter = new TarefaAdapter(getBaseContext(), null);
+        etiquetaAdapter = new EtiquetaAdapter(getBaseContext(),null);
+        tarefaEtiquetaAdapter = new TarefaEtiquetaAdapter(getBaseContext(),null);
+
+        tarefaAdapter.atualizar();
+        etiquetaAdapter.atualizar();
+        tarefaEtiquetaAdapter.atualizar(idTarefa);
+
+        spnEtiquetas.setAdapter(etiquetaAdapter);
+        lstEtiquetas.setAdapter(tarefaEtiquetaAdapter);
+
+        tarefa = tarefaAdapter.getTarefa(idTarefa);
         txtTitulo.setText(tarefa.getTitulo());
         txtDescricao.setText(tarefa.getDescricao());
+
         switch (tarefa.getDificuldade()) {
             case FACIL: {
                 spnDificuldade.setSelection(0);
@@ -99,6 +123,26 @@ public class EditarTarefaActivity extends AppCompatActivity {
             }
         }
 
+        lstEtiquetas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                tarefaEtiquetaAdapter.removerEtiqueta(idTarefa, String.valueOf(id));
+                tarefaEtiquetaAdapter.atualizar(idTarefa);
+                return true;
+            }
+        });
+
+        btnAddEtiqueta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = etiquetaAdapter.getId(spnEtiquetas.getSelectedItemPosition());
+                tarefaEtiquetaAdapter.inserirEtiqueta(idTarefa, id);
+                tarefaEtiquetaAdapter.atualizar(idTarefa);
+
+            }
+        });
+
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,8 +154,8 @@ public class EditarTarefaActivity extends AppCompatActivity {
                 Utils.Dificuldade dificuldade = (Utils.Dificuldade) spnDificuldade.getSelectedItem();
                 tarefa.setDificuldade(dificuldade);
 
-                adapter.atualizar(tarefa, idTarefa);
-                adapter.atualizar();
+                tarefaAdapter.atualizar(tarefa, idTarefa);
+                tarefaAdapter.atualizar();
 
                 Toast.makeText(EditarTarefaActivity.this, R.string.tarefaAtualizada, Toast.LENGTH_SHORT).show();
 

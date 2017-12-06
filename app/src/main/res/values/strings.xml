@@ -15,4 +15,6 @@
     <string name="erroDescricao">Ta tentando salvar o que mesmo?</string>
     <string name="cadastroRealizado">Cadastro realizado!</string>
     <string name="ops">OPS!</string>
+    <string name="etiquetas">Etiquetas</string>
+    <string name="tarefas">Tarefas</string>
 </resources>

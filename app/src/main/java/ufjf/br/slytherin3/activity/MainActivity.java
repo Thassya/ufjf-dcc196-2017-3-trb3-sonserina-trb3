@@ -17,21 +17,21 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAddTarefa;
     private Button btnAddEtiqueta;
     private ListView lstTarefas;
-    private TarefaAdapter tAdapter;
+    private TarefaAdapter tarefaAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        lstTarefas = (ListView) findViewById(R.id.lstTarefas);
         btnAddEtiqueta = (Button)findViewById(R.id.btnAddEtiqueta);
         btnAddTarefa = (Button) findViewById(R.id.btnAddTarefa);
 
-        tAdapter = new TarefaAdapter(getBaseContext(), null);
-        tAdapter.atualizar();
+        tarefaAdapter = new TarefaAdapter(getBaseContext(), null);
+        tarefaAdapter.atualizar();
+        lstTarefas.setAdapter(tarefaAdapter);
 
-        lstTarefas = (ListView) findViewById(R.id.lstTarefas);
-        lstTarefas.setAdapter(tAdapter);
         lstTarefas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 //criar DIALOG confirm https://developer.android.com/guide/topics/ui/dialogs.html?hl=pt-br
-                tAdapter.deletar(String.valueOf(id));
-                tAdapter.atualizar();
+                tarefaAdapter.deletar(String.valueOf(id));
+                tarefaAdapter.atualizar();
                 Toast.makeText(MainActivity.this, R.string.tarefaExcluida, Toast.LENGTH_SHORT).show();
                 return true;
             }
@@ -57,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent novaTarefa = new Intent(MainActivity.this, NovaTarefaActivity.class);
                 startActivity(novaTarefa);
+            }
+
+            @Override
+            protected void finalize() throws Throwable {
+                tarefaAdapter.atualizar();
+                super.finalize();
             }
         });
 

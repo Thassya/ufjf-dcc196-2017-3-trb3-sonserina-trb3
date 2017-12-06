@@ -38,6 +38,7 @@ public class EtiquetaAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView textDesc = view.findViewById(R.id.txtEtiqueta);
         String desc = cursor.getString(cursor.getColumnIndexOrThrow(EtiquetaContract.Etiqueta.COLUMN_NAME_DESCRICAO));
+        String id = cursor.getString(cursor.getColumnIndexOrThrow(EtiquetaContract.Etiqueta._ID));
         textDesc.setText(desc);
     }
 
@@ -67,5 +68,31 @@ public class EtiquetaAdapter extends CursorAdapter {
             Log.e("INSERIR ETIQUETA", e.getLocalizedMessage());
             Log.e("INSERIR ETIQUETA", e.getStackTrace().toString());
         }
+    }
+
+    public Etiqueta getEtiqueta(String id){
+        Etiqueta et = new Etiqueta();
+        try {
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            String[] visao = {
+                    EtiquetaContract.Etiqueta._ID,
+                    EtiquetaContract.Etiqueta.COLUMN_NAME_DESCRICAO,
+            };
+            String selecao = EtiquetaContract.Etiqueta._ID+"= "+id;
+            Cursor c = db.query(EtiquetaContract.Etiqueta.TABLE_NAME, visao, selecao, null, null, null, null);
+            c.moveToFirst();
+            et.setDescricao(c.getString((c.getColumnIndex(EtiquetaContract.Etiqueta.COLUMN_NAME_DESCRICAO))));
+            et.setId(c.getInt(c.getColumnIndexOrThrow(EtiquetaContract.Etiqueta._ID)));
+        } catch (Exception e) {
+            Log.e("BUSCA_TEG", e.getLocalizedMessage());
+            Log.e("BUSCA_TEG", e.getStackTrace().toString());
+        }
+        return et;
+    }
+
+    public String getId(int i){
+        Cursor c = getCursor();
+        c.moveToPosition(i);
+        return c.getString(c.getColumnIndex(EtiquetaContract.Etiqueta._ID));
     }
 }
